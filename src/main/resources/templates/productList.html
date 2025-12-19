@@ -1,0 +1,31 @@
+<!-- /src/main/resources/templates/fragments/productList.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="productTable">
+    <table class="table table-bordered table-striped text-center">
+        <thead class="table-dark">
+            <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="p : ${products}">
+                <td>
+                    <img th:src="'data:image/jpeg;base64,' + ${p.photofilename}" 
+                         alt="Product Image" width="80" height="80" class="rounded">
+                </td>
+                <td th:text="${p.pname}"></td>
+                <td th:text="${p.category}"></td>
+                <td th:text="${p.pprice}"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

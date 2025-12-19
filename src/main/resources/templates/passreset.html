@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Reset Password</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+	
+	<script>
+	function sendotp() {
+	    let email = document.getElementById("email").value;
+
+	    if(email === "") {
+	        alert("Please enter your email first");
+	        return;
+	    }
+
+	    var a = new XMLHttpRequest();
+	    a.open("GET", "http://localhost:8080/genrateotp?email=" + email, true);
+
+	    a.onreadystatechange = function() {
+	        if(this.readyState == 4 && this.status == 200) {
+	            if(this.responseText === "Email not found") {
+	                alert("Email not registered!");
+	            } else {
+	                alert("OTP sent!");
+	                document.getElementById("otp").value = this.responseText;
+	            }
+	        }
+	    }
+	    a.send();
+	}
+	</script>
+	
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+		
+		
+		
+	</script>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">Reset Password</h3>
+
+                    <!-- Password Reset Form -->
+                    <form action="/resetpassword" method="post">
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email ID</label>
+                            <input type="email" name="email" id="email" class="form-control" placeholder="Enter your email" required>
+                        </div>
+
+                        <!-- OTP -->
+                        <div class="mb-3">
+                            <label for="otp" class="form-label">OTP</label>
+                            <input type="text" name="otp" id="otp" class="form-control" placeholder="Enter OTP" required>
+                    
+							<button type="button" class="btn btn-secondary" onclick="sendotp()">Send OTP</button>
+
+							    </div>
+						
+						
+						
+
+                        <!-- New Password -->
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" name="password" id="newPassword" class="form-control" placeholder="Enter new password" required>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Reset Password</button>
+                        </div>
+
+                        <!-- Back to Login -->
+                        <p class="text-center mt-3">
+                            <a href="/login" class="text-decoration-none">Back to Login</a>
+                        </p>
+
+                       
+                    </form>
+                    <!-- End Form -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<p th:text="${msg}" class="text-center text-danger"></p>
+
+</div>
+
+</body>
+</html>
