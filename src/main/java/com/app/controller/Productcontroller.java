@@ -20,14 +20,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.app.dao.Orderitemdao;
 import com.app.service.Productservice;
+import com.app.user.Orderitem;
 import com.app.user.Product;
+import com.app.user.User;
 
 @Controller
 public class Productcontroller {
 
 	@Autowired
 	Productservice ps;
+	
+	
+	@Autowired
+	Orderitemdao od;
+	
 
 	@GetMapping("/viewform")
 	public String viewproductform() {
@@ -134,28 +142,35 @@ public class Productcontroller {
 	 
 	 @PostMapping("/addtocart")
 	 @ResponseBody
-	 
 	 public String addToCart(@RequestBody Product p, HttpSession session) {
 
-		 if (p.getPhoto() != null) {
-		        p.setPhotofilename(Base64.getEncoder().encodeToString(p.getPhoto()));
-		    }
-		 
-	     List<Product> cart =
-	         (List<Product>) session.getAttribute("cart");
+	     List<Product> cart = (List<Product>) session.getAttribute("cart");
+	     if (cart == null) cart = new ArrayList<>();
 
-	     if (cart == null) {
-	         cart = new ArrayList<>();
+	     boolean found = false;
+
+	     for (Product prod : cart) {
+	         if (prod.getPid() == p.getPid()) { // compare by product id
+	             prod.setQuantity(prod.getQuantity() + 1); // increment quantity
+	             found = true;
+	             break;
+	         }
 	     }
 
-	     cart.add(p);
-	    
+	     if (!found) {
+	         p.setQuantity(1); // first time adding
+	         cart.add(p);
+	     }
+
+	   
 
 	     session.setAttribute("cart", cart);
 
-
-	     return String.valueOf(cart.size()); 
+	     return String.valueOf(cart.size());
 	 }
+
+
+
  
 	 
 	 @GetMapping("/cart")
@@ -178,7 +193,7 @@ public class Productcontroller {
 		    }
 		    double total=0;
 		     for (Product product : cart) {
-		    	 total= total+product.getPprice();
+		         total += product.getPprice() * product.getQuantity(); // ✅ IMPORTANT
 			
 			}
 			    model.addAttribute("total", total);
@@ -187,18 +202,77 @@ public class Productcontroller {
 		    return "mycart";  // Thymeleaf template: cart.html
 		}
 		 
+	  
 		 
-		 
-		 
-	@GetMapping("/checkout")	 
-	  public String checkout() {
-		  
-		
-		
-		return "checkout";
-	  }
 	 
-}
+	 @PostMapping("/buyenow")
+	 public String buynow(HttpSession session) {
+		 
+		    User user = (User) session.getAttribute("loggedUser");
+		 List<Product> cart = (List<Product>) session.getAttribute("cart");
+               for (Product product : cart) {
+				Orderitem oi = new Orderitem();
+			    Product fullProduct = ps.getbyid(product.getPid()); // fetch full product from DB
+
+				oi.setPname(product.getPname());
+				oi.setCategory(product.getCategory());
+				oi.setPprice(product.getPprice());
+				oi.setQuantity(product.getQuantity());
+		        oi.setPhoto(fullProduct.getPhoto());
+		        oi.setPhotofilename("product_" + product.getPid() + ".jpg");
+		        oi.setUserid(user);
+		               
+		        od.saveorder(oi);
+		        
+		        if (user.getOl() == null) user.setOl(new ArrayList<>());
+		        user.getOl().add(oi);
+            	   
+			}
+		  
+               session.removeAttribute("cart");
+		        session.removeAttribute("total");
+		 
+        	   return "redirect:/userorders";
+
+		 
+	 }
+	 
+	 @GetMapping("/userorders")
+	 public String getuseranditsorder(HttpSession session, Model model) {
+	     User user = (User) session.getAttribute("loggedUser");
+	     List<Orderitem> orders = user.getOl();
+
+	     for (Orderitem o : orders) {
+	         if (o.getPhoto() != null) {
+	             String base64Photo = Base64.getEncoder().encodeToString(o.getPhoto());
+	             o.setPhotofilename(base64Photo);
+	         }
+	     }
+
+	     model.addAttribute("orders", orders);
+	     return "orders";
+	 }
+			    
+			    
+
+
+			 
+			 
+			 
+		 }
+		 
+		 
+		 
+		 
+		 
+		 
+		
+		 
+		
+		
+	
+
+
 	
 
 	 

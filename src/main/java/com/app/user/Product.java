@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.Transient;
 
 
 @Entity
@@ -18,8 +19,20 @@ public class Product {
 	String pname;
 	String category;
 	double pprice;
+	@Transient
+	private int quantity = 1;
+
+	public int getQuantity() {
+	    return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+	    this.quantity = quantity;
+	}	
 	
-    private String photofilename;
+   
+
+	private String photofilename;
 	@Lob
 	@Column(name = "photo", columnDefinition="LONGBLOB")
 	private byte [] photo;
@@ -91,6 +104,8 @@ public class Product {
 	public void setPhoto(byte[] photo) {
 		this.photo = photo;
 	}
+
+	
 	
 	
 	

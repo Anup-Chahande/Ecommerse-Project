@@ -26,5 +26,19 @@ public class Productservice {
 	return pd.getallproducts();
 	
 	}
+	
+    public void updateproducts(Product p) {
 
+    	
+    	 pd.updateproducts(p);
+    	 
+    	
+    }
+    
+    public Product getbyid(long id) {
+
+    	
+    return	pd.getbyid(id);
+    	
+    }
 }

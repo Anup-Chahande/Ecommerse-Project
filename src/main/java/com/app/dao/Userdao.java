@@ -41,6 +41,7 @@ public class Userdao {
 	public List<User> getalluser() {
 
 		Session s = sf.openSession();
+		
 		Criteria c = s.createCriteria(User.class);
 		List<User> ls = c.list();
 

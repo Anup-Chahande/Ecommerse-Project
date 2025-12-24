@@ -9,12 +9,11 @@
 	function addtocart(btn) {
 	    // Build product JSON from data-* attributes
 	    var product = {
-	        id: btn.dataset.id,
+	        pid: parseInt(btn.dataset.id),  // important: unique product ID
 	        pname: btn.dataset.name,
 	        category: btn.dataset.category,
 	        pprice: parseFloat(btn.dataset.price),
-			photofilename: btn.dataset.photo
-
+	        photofilename: btn.dataset.photo
 	    };
 
 	    var xhr = new XMLHttpRequest();
@@ -31,6 +30,7 @@
 	    xhr.send(JSON.stringify(product));
 	}
 	</script>
+
 <div class="container mt-4">
 
     <!-- Navbar -->
@@ -55,16 +55,16 @@
                     <p class="card-text mb-1">Category: <span th:text="${p.category}">Category</span></p>
                     <p class="card-text fw-bold mb-2">Price: ₹<span th:text="${p.pprice}">Price</span></p>
 					<!-- Correct way to add multiple data attributes -->
-										<button class="btn btn-primary mt-auto"
-										        th:data-id="${p.pid}"   
-										        th:data-name="${p.pname}"
-										        th:data-category="${p.category}"
-										        th:data-price="${p.pprice}"
-												th:data-photo="${p.photofilename}"
+					<button class="btn btn-primary mt-auto"
+					        th:data-id="${p.pid}"   
+					        th:data-name="${p.pname}"
+					        th:data-category="${p.category}"
+					        th:data-price="${p.pprice}"
+					        th:data-photo="${p.photofilename}"
+					        onclick="addtocart(this)">
+					    Add to Cart
+					</button>
 
-										        onclick="addtocart(this)">
-										    Add to Cart
-										</button>
 					
 					                </div>
             </div>

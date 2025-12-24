@@ -38,4 +38,29 @@ public class Productdao {
             s.close(); 
         }
     }
+    
+    public void updateproducts(Product p) {
+        Session s = sf.openSession();
+        Transaction t = s.beginTransaction();
+		s.merge(p);
+		t.commit();	       
+		s.close();
+          
+    } 
+         
+    public Product getbyid(long id) {
+        Session s = sf.openSession();
+        try {
+
+        	return s.get(Product.class, id);
+        } finally {
+            s.close(); 
+        }
+    }
+    
+    	
+    	
+    
+    
+    
 }

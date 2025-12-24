@@ -48,78 +48,119 @@
 
 
 <div th:fragment="header">
-    <nav style="background:#222; padding:15px; color:white; display:flex; justify-content:space-between;">
+    <nav style="
+        background:#131921;
+        padding:10px 20px;
+        color:white;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        font-family:Arial, sans-serif;
+    ">
 
-        <!-- LEFT -->
-        <div>
+        <!-- LEFT : LOGO + LINKS -->
+        <div style="display:flex; align-items:center; gap:18px;">
+            <a href="/getallproducts" style="color:white; font-weight:bold; font-size:18px; text-decoration:none;">
+                MyShop
+            </a>
 
-			<a href="/getallproducts" style="color:white; margin-right:20px;">Home</a>
-			            <a href="/category/Electronics" style="color:white; margin-right:20px;">Electronics</a>
-			            <a href="/category/Fashion" style="color:white; margin-right:20px;">Fashion</a>
-			            <a href="/category/HomeKitchen" style="color:white; margin-right:20px;">Home-kitchen</a>
-						<a href="/category/Books" style="color:white; margin-right:20px;">Books</a>
-						<a href="/viewform" style="color:white; margin-right:20px;">Addproducts</a>
-						<a href="/cart" style="color:white; text-decoration:none;">
-						    🛒 Cart (<span id="cartCount"
-						        th:text="${session.cart != null ? session.cart.size() : 0}">
-						        0
-						    </span>)
-						</a>
+            <a href="/category/Electronics" style="color:white; text-decoration:none;">Electronics</a>
+            <a href="/category/Fashion" style="color:white; text-decoration:none;">Fashion</a>
+            <a href="/category/HomeKitchen" style="color:white; text-decoration:none;">Home & Kitchen</a>
+            <a href="/category/Books" style="color:white; text-decoration:none;">Books</a>
+            <a href="/viewform" style="color:white; text-decoration:none;">Add Products</a>
 
-
-			
+            <a href="/cart" style="color:#ff9900; text-decoration:none; font-weight:bold;">
+                🛒 Cart (<span id="cartCount"
+                    th:text="${session.cart != null ? session.cart.size() : 0}">0</span>)
+            </a>
         </div>
 
-		<!-- RIGHT SIDE USER INFO -->
-		<div th:if="${session.loggedUser != null}" class="dropdown" style="color:white;">
-		    <!-- Circle avatar with first letter in uppercase -->
-		    <button class="btn btn-secondary dropdown-toggle rounded-circle"
-		            type="button"
-		            id="userDropdown"
-		            data-bs-toggle="dropdown"
-		            aria-expanded="false"
-		            style="width:40px; height:40px; padding:0; text-align:center; background:#ff9800; border:none; color:white;">
-		        <span th:text="${#strings.substring(session.loggedUser.name,0,1).toUpperCase()}"></span>
-		    </button>
+        <!-- CENTER : SEARCH -->
+        <form action="/search" method="get"
+              style="display:flex; width:35%; min-width:280px;">
+            <input
+                type="text"
+                name="keyword"
+                placeholder="Search products"
+                style="
+                    flex:1;
+                    padding:8px 10px;
+                    border:none;
+                    outline:none;
+                    border-radius:4px 0 0 4px;
+                ">
+            <button type="submit"
+                style="
+                    padding:8px 16px;
+                    background:#febd69;
+                    border:none;
+                    border-radius:0 4px 4px 0;
+                    cursor:pointer;
+                    font-weight:bold;
+                ">
+                🔍
+            </button>
+        </form>
 
-		    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-		        <!-- Display full name -->
-		        <li class="dropdown-item-text" style="font-weight:bold;" th:text="${session.loggedUser.name}"></li>
-		        <li><hr class="dropdown-divider"></li>
-		        <li>				<a class="dropdown-item"
-				   th:href="@{/manageaccount/{id}(id=${session.loggedUser.id})}">
-				   Manage Account</a></li>
-		        <li><a class="dropdown-item" href="/logout">Logout</a></li>
-		    </ul>
-		</div>
+        <!-- RIGHT : USER / LOGIN -->
+        <div style="display:flex; align-items:center; gap:15px;">
 
-		<form action="/search" method="get" style="margin:0; display:flex;">
-		           <input 
-		               type="text" 
-		               name="keyword"
-		               placeholder="Search products..."
-		               style="padding:6px; border:none; border-radius:4px 0 0 4px; outline:none; width:180px;">
-		           
-		           <button type="submit"
-		               style="padding:6px 12px; background:#ff9800; color:white; border:none;
-		               border-radius:0 4px 4px 0; cursor:pointer;">
-		               Search
-		           </button>
-		       </form>
+            <!-- Logged in user -->
+            <div th:if="${session.loggedUser != null}" class="dropdown">
+                <button
+                    class="dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    style="
+                        width:40px;
+                        height:40px;
+                        border-radius:50%;
+                        background:#ff9900;
+                        border:none;
+                        color:black;
+                        font-weight:bold;
+                        cursor:pointer;
+                    ">
+                    <span th:text="${#strings.substring(session.loggedUser.name,0,1).toUpperCase()}"></span>
+                </button>
 
-		
-		<!-- If user not logged in -->
-		<div th:if="${session.loggedUser == null}">
-		    <a href="/login" style="color:white;">Login</a>
-		</div>
-		
-		
-		
-		
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li class="dropdown-item-text"
+                        style="font-weight:bold;"
+                        th:text="${session.loggedUser.name}">
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item"
+                           th:href="@{/manageaccount/{id}(id=${session.loggedUser.id})}">
+                            Manage Account
+                        </a>
+                    </li>
+					<li>
+					           <a class="dropdown-item" th:href="@{/userorders}">
+					               My Orders
+					           </a>
+					       </li>
+                    <li>
+                        <a class="dropdown-item" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
 
-		
-		
-
+            <!-- Not logged in -->
+            <div th:if="${session.loggedUser == null}">
+                <a href="/login"
+                   style="
+                        color:white;
+                        text-decoration:none;
+                        border:1px solid white;
+                        padding:6px 12px;
+                        border-radius:4px;
+                   ">
+                    Login
+                </a>
+            </div>
+        </div>
 
     </nav>
 </div>
